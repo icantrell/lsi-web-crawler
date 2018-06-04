@@ -17,24 +17,27 @@ class Word:
 class WordInstance:
     __tablename__ = 'word_instance'
     id = Column(Integer, primary_key = True)
-    word = Column(String)
     frequency = Column(Float)
     webpage_id = Column(Integer, ForeignKey('webpage.id')
     word_id = Column(Integer, ForeignKey('word.id')
 
 class Webpage:
+    stop_words = []
     __tablename__ = 'webpage'
     id = Column(Integer, primary_key=True)
     url = Column(String)
     domain = Column(String)
     text = Colum(Text)
-
+    
+    def set_page(page_text):
+        self.text = page_text
+    def get_frequencies():
+       pass 
+        
 class Queue(list):
     def __init__(self):
         self.lock = threading.Rlock()
-    def pop(self):
-        with self.lock:
-            return super.pop()
+    
     def append(self, item):
         with self.lock:
             return super.append(item)
@@ -54,7 +57,6 @@ class RequestManager(threading.Thread):
     def run(self):
         while(self.unprocessed):
             if len(self.processed) <= MAXPROCESSED: 
-                self.Rlock()
                 page= self.unprocessed.randpop()
                 try: 
                     text = urllib.request.urlopen(page.get_url(),timeout = 1).read()
@@ -83,4 +85,26 @@ class RequestManager(threading.Thread):
         return len(self.unprocessed)
 
 
+class storage(threading.Thread):
+    def __init__(self, RM):
+        super(Parser, self).__init__()
+        self.RM = RM
 
+    def run(self):
+        while(RM.isalive()):
+            if len(RM.unprocessed.count() <= MAXUNPROCESSED) and RM.processed_count():
+                page = RM.pop_processed()
+                page.set_frequencies()
+                try:
+                    for w in page.get_words():
+                        if w not in self.rec_words:
+                            word = self.session.query(Word).filter_by(word = w)
+                            if not word:
+                                word = Word(word = w)
+                                self.session.add(word)
+                            wid = word.id
+
+                        else:
+                            wid = self.rec_words[w]
+
+                                 
