@@ -73,7 +73,7 @@ class Webpage(HTMLParser,Base):
                 if attrib[0] == 'href':
                     link = urlparse(attrib[1])
                     if not (link.scheme and  link.netloc):
-                        link = '{scheme}://{netloc}'.format(scheme = self.scheme, netloc = self.netloc + attrib[1]
+                        link = '{uri.scheme}://{uri.netloc}'.format(uri =  self.scheme + '://' +  self.netloc + attrib[1])
                         self.links.append(link)
                 else:
                     self.links.append(attrib[1])
@@ -95,13 +95,13 @@ class Queue(list):
             return super(Queue, self).pop(random.randint(0,len(self)-1))
 
 class RequestManager(threading.Thread):
-    def __init__(self, upqueue, pqueue, init_urls_file = 'init_urls.txt', lf='RequestManager.log', domain_once = False):
+    def __init__(self, unprocessed, processed, init_urls_file = 'init_urls.txt', lf='RequestManager.log', domain_once = False):
         super(RequestManager, self).__init__()
         self.logfile = open(lf,'a')
         self.errors = 0
-        self.unprocessed = upqueue
+        self.unprocessed = unnprocessed
         self.unprocessed+= map(Webpage,open(init_urls_file,'r').read().split())
-        self.processed = pqueue
+        self.processed = processed
         self.closed_domains = set()
         self.closed_pages = set()
         self.do = domain_once
@@ -128,43 +128,35 @@ class RequestManager(threading.Thread):
         pass
 
 
-    def queue_page(self, webpage_url):
-        if not (self.do and webpage.domain in self.closed_domains) and (webpage.url not in self.closed_pages):
-            self.unprocessed.append(webpage)
-
-    def unprocessed_count(self):
-        return len(self.unprocessed)
-    
-    def pop_processed(self):
-        return self.processed.randpop()
 
 class Storage(threading.Thread):
-    def __init__(self, RM, logfile='storage.log'):
+    def __init__(self, processed, unprocessed, logfile='storage.log', non_english = False):
         super(Storage, self).__init__()
-        self.RM = RM
         #\\C:\\Users\\Issiah\\Envs\\lsi_web_scraper\\lsi-web-crawler\\web_crawler\\webpages.db
         engine = create_engine('sqlite:///webpages.db')
         Base.metadata.create_all(engine)
         self.session = Session()
         self.logfile = open(logfile, 'a')
+        self.processed = processed
+        self.unprocessed = unprocessed
 
     def run(self):
         while(1):
-            if (len(self.RM.unprocessed) <= MAXUNPROCESSED) and len(self.RM.processed):
-                page = self.RM.pop_processed()
+            if (len(self.processed) <= MAXUNPROCESSED) and len(self.processed):
+                page = self.processed.rand_pop()
                 page.parse()
 
-                for link in page.links():
-                    RM.queue_page(link)
+                for linked_page in page.get_link_pages():
+                    self.unprocessed.append(linked_page)            
 
-                if page.english:
+                if page.english or non_english:
                     try:
                         self.session.add(page)
                         self.session.commit() 
                    
                     except Exception as e:
                         self.logfile.write('Storage Manager exception: ' + str(e) +'\t'+ time.strftime('%d/%m/%Y %H:%M:%S')+'\n')
-        
+                 
         self.close()
 
     def close(self):
