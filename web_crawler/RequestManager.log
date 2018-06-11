@@ -1220,3 +1220,5 @@ Request Manager exception: unknown url type: '#cite_note-Simk._Mc._Study-29'	07/
 Request Manager exception: unknown url type: '#cite_note-23'	07/06/2018 15:05:18
 Request Manager exception: unknown url type: '#cite_ref-15'	07/06/2018 15:05:18
 Request Manager exception: unknown url type: '#cite_note-3'	07/06/2018 15:05:18
+Request Manager exception: 'NoneType' object has no attribute 'fill'	11/06/2018 14:22:41
+Request Manager exception: 'NoneType' object has no attribute 'fill'	11/06/2018 14:22:55

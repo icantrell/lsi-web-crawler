@@ -2,3 +2,10 @@ Storage Manager exception: (sqlite3.OperationalError) unable to open database fi
 Storage Manager exception: (sqlite3.OperationalError) unable to open database file2018-06-06
 Storage Manager exception: (sqlite3.OperationalError) unable to open database file2018-06-06
 Storage Manager exception: (sqlite3.OperationalError) unable to open database file	00:00:00
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:21:21
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:23:33
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:24:22
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:30:37
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:42:27
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:44:15
+Storage Manager exception: Could not locate a bind configured on mapper Mapper|Webpage|webpage or this Session	11/06/2018 15:45:34
